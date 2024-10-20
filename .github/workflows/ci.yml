@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  spm-16:
+    name: Build Xcode 16
+    runs-on: macos-14
+    strategy:
+      matrix:
+        platforms: [
+          'iOS_18,watchOS_11',
+          'macOS_15,tvOS_18',
+          'visionOS_2'
+        ]
+      fail-fast: false
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.5'
+          bundler-cache: true
+      - name: Select Xcode Version
+        run: sudo xcode-select --switch /Applications/Xcode_16.app/Contents/Developer
+      - name: Download visionOS
+        if: matrix.platforms == 'visionOS_2'
+        run: |
+          sudo xcodebuild -runFirstLaunch
+          sudo xcrun simctl list
+          sudo xcodebuild -downloadPlatform visionOS
+          sudo xcodebuild -runFirstLaunch
+      - name: Build and Test Framework
+        run: Scripts/build.swift ${{ matrix.platforms }}
+      - name: Prepare Coverage Reports
+        run: ./Scripts/prepare-coverage-reports.sh
+      - name: Upload Coverage Reports
+        if: success()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  spm-16-swift:
+    name: Swift Build Xcode 16
+    runs-on: macos-14
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.5'
+          bundler-cache: true
+      - name: Select Xcode Version
+        run: sudo xcode-select --switch /Applications/Xcode_16.app/Contents/Developer
+      - name: Build and Test Framework
+        run: xcrun swift test -c release -Xswiftc -enable-testing
+  linux:
+    name: "Build and Test on Linux"
+    runs-on: ubuntu-24.04
+    container: swift:6.0
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Build and Test Framework
+        run: swift test -c release --enable-code-coverage -Xswiftc -enable-testing
+      - name: Prepare Coverage Reports
+        run: |
+          llvm-cov export -format="lcov" .build/x86_64-unknown-linux-gnu/release/swift-testing-expectationPackageTests.xctest -instr-profile .build/x86_64-unknown-linux-gnu/release/codecov/default.profdata > coverage.lcov
+      - name: Upload Coverage Reports
+        if: success()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  lint-swift:
+    name: Lint Swift
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Lint Swift
+        run: swift run --package-path CLI swiftformat --swiftversion 6.0 . --lint
