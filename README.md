@@ -28,10 +28,22 @@ The `Expectation` vended from this library fills that gap:
 
 ### Swift Package Manager
 
-To install swift-async-queue in your project with [Swift Package Manager](https://github.com/apple/swift-package-manager), the following lines can be added to your `Package.swift` file:
+To install swift-testing-expectation in your project with [Swift Package Manager](https://github.com/apple/swift-package-manager), the following lines can be added to your `Package.swift` file:
 
 ```swift
 dependencies: [
 	.package(url: "https://github.com/dfed/swift-testing-expectation", from: "0.1.0"),
 ]
 ```
+
+### CocoaPods
+
+To install swift-testing-expectation in your project with [CocoaPods](http://cocoapods.org), add the following to your `Podfile`:
+
+```
+pod 'TestingExpectation', '~> 0.1.0'
+```
+
+## Contributing
+
+I’m glad you’re interested in swift-testing-expectation, and I’d love to see where you take it. Please read the [contributing guidelines](Contributing.md) prior to submitting a Pull Request.
