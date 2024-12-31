@@ -24,6 +24,25 @@ The `Expectation` vended from this library fills that gap:
 }
 ```
 
+### Waiting for multiple expectations
+
+The `Expectations` type vended from this library makes it easy to wait for multiple expectations:
+
+```swift
+@Test func testMethodEventuallyTriggersClosures() async {
+    let expectation1 = Expectation()
+    let expectation2 = Expectation()
+    let expectation3 = Expectation()
+
+    systemUnderTest.closure1 = { expectation1.fulfill() }
+    systemUnderTest.closure2 = { expectation2.fulfill() }
+    systemUnderTest.closure3 = { expectation3.fulfill() }
+    systemUnderTest.method()
+
+    await Expectations(expectation1, expectation2, expectation3).fulfillment(within: .seconds(5))
+}
+```
+
 ## Installation
 
 ### Swift Package Manager
