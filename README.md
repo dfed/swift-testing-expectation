@@ -1,3 +1,9 @@
+> [!Warning]
+> **Deprecation notice**
+> 
+> Swift 6 introduced the functionality offerred by this package natively with [`confirmation(_:expectedCount:isolation:sourceLocation:_:)`](https://developer.apple.com/documentation/testing/confirmation(_:expectedcount:isolation:sourcelocation:_:)-5mqz2).
+> You can read more about this on the official [Apple Developer site](https://developer.apple.com/documentation/testing/testing-asynchronous-code). 
+
 # swift-testing-expectation
 [![CI Status](https://img.shields.io/github/actions/workflow/status/dfed/swift-testing-expectation/ci.yml?branch=main)](https://github.com/dfed/swift-testing-expectation/actions?query=workflow%3ACI+branch%3Amain)
 [![codecov](https://codecov.io/gh/dfed/swift-testing-expectation/branch/main/graph/badge.svg?token=nZBHcZZ63F)](https://codecov.io/gh/dfed/swift-testing-expectation)
