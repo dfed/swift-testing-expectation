@@ -15,3 +15,6 @@
 --enable wrapMultilineStatementBraces
 --disable consistentSwitchCaseSpacing
 --disable blankLineAfterSwitchCase
+
+# global
+--swiftversion 6.0
