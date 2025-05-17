@@ -25,23 +25,56 @@ import Testing
 public actor Expectation {
 	// MARK: Initialization
 
+	/// An expected outcome in an asynchronous test.
+	/// - Parameters:
+	///   - expectedCount: The number of times `fulfill()` must be called before the expectation is completely fulfilled.
+	///   - conditionFulfillmentAwaited: When `true`, crashes in `deinit` when an expectation is created but its fulfillment has not been awaited.
 	public init(
-		expectedCount: UInt = 1
+		expectedCount: UInt = 1,
+		conditionFulfillmentAwaited: Bool = true,
+		filePath: String = #filePath,
+		fileID: String = #fileID,
+		line: Int = #line,
+		column: Int = #column
 	) {
 		self.init(
 			expectedCount: expectedCount,
 			expect: { fulfilledWithExpectedCount, comment, sourceLocation in
 				#expect(fulfilledWithExpectedCount, comment, sourceLocation: sourceLocation)
-			}
+			},
+			precondition: conditionFulfillmentAwaited ? Swift.precondition : nil,
+			filePath: filePath,
+			fileID: fileID,
+			line: line,
+			column: column
 		)
 	}
 
 	init(
 		expectedCount: UInt,
-		expect: @escaping (Bool, Comment?, SourceLocation) -> Void
+		expect: @escaping @Sendable (Bool, Comment?, SourceLocation) -> Void,
+		precondition: (@Sendable (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> Void)? = nil,
+		filePath: String = #filePath,
+		fileID: String = #fileID,
+		line: Int = #line,
+		column: Int = #column
 	) {
 		self.expectedCount = expectedCount
 		self.expect = expect
+		self.precondition = precondition
+		createdSourceLocation = .init(
+			fileID: fileID,
+			filePath: filePath,
+			line: line,
+			column: column
+		)
+	}
+
+	deinit {
+		let fulfillmentAwaited = fulfillmentAwaited
+		if let precondition {
+			precondition(fulfillmentAwaited, "Expectation created at \(createdSourceLocation) was never awaited", #file, #line)
+		}
 	}
 
 	// MARK: Public
@@ -53,6 +86,7 @@ public actor Expectation {
 		line: Int = #line,
 		column: Int = #column
 	) async {
+		fulfillmentAwaited = true
 		guard !isComplete else { return }
 		let wait = Task {
 			try await Task.sleep(for: duration)
@@ -93,8 +127,12 @@ public actor Expectation {
 		expectedCount <= fulfillCount
 	}
 
+	private var fulfillmentAwaited = false
+
 	private let expectedCount: UInt
-	private let expect: (Bool, Comment?, SourceLocation) -> Void
+	private let expect: @Sendable (Bool, Comment?, SourceLocation) -> Void
+	private let precondition: (@Sendable (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> Void)?
+	private let createdSourceLocation: SourceLocation
 
 	private func _fulfill(
 		filePath: String,
