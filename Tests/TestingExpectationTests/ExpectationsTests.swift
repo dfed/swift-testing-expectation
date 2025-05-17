@@ -26,14 +26,14 @@ import Testing
 
 struct ExpectationsTests {
 	@Test
-	func test_fulfillment_doesNotWaitIfAlreadyFulfilled() async {
+	func fulfillment_doesNotWaitIfAlreadyFulfilled() async {
 		let expectation = Expectation(expectedCount: 0)
 		await Expectations(expectation).fulfillment(within: .seconds(10))
 	}
 
 	@MainActor // Global actor ensures Task ordering.
 	@Test
-	func test_fulfillment_waitsForFulfillmentOfSingleExpectation() async {
+	func fulfillment_waitsForFulfillmentOfSingleExpectation() async {
 		let expectation = Expectation(expectedCount: 1)
 		var hasFulfilled = false
 		let wait = Task {
@@ -49,7 +49,7 @@ struct ExpectationsTests {
 
 	@MainActor // Global actor ensures Task ordering.
 	@Test
-	func test_fulfillment_waitsForFulfillmentOfMultipleExpectations() async {
+	func fulfillment_waitsForFulfillmentOfMultipleExpectations() async {
 		let expectation1 = Expectation(expectedCount: 1)
 		let expectation2 = Expectation(expectedCount: 1)
 		let expectation3 = Expectation(expectedCount: 1)
@@ -68,7 +68,7 @@ struct ExpectationsTests {
 	}
 
 	@Test
-	func test_fulfillment_triggersFalseExpectationWhenSingleExpectationTimesOut() async {
+	func fulfillment_triggersFalseExpectationWhenSingleExpectationTimesOut() async {
 		await confirmation { confirmation in
 			let expectation = Expectation(
 				expectedCount: 1,
@@ -83,7 +83,7 @@ struct ExpectationsTests {
 	}
 
 	@Test
-	func test_fulfillment_triggersFalseExpectationWhenSingleExpectationOfManyTimesOut() async {
+	func fulfillment_triggersFalseExpectationWhenSingleExpectationOfManyTimesOut() async {
 		await confirmation(expectedCount: 3) { confirmation in
 			let expectation1 = Expectation(
 				expectedCount: 1,

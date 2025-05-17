@@ -26,7 +26,7 @@ import Testing
 
 struct ExpectationTests {
 	@Test
-	func test_fulfill_triggersExpectation() async {
+	func fulfill_triggersExpectation() async {
 		await confirmation { confirmation in
 			let systemUnderTest = Expectation(
 				expectedCount: 1,
@@ -40,7 +40,7 @@ struct ExpectationTests {
 	}
 
 	@Test
-	func test_fulfill_triggersExpectationOnceWhenCalledTwiceAndExpectedCountIsTwo() async {
+	func fulfill_triggersExpectationOnceWhenCalledTwiceAndExpectedCountIsTwo() async {
 		await confirmation { confirmation in
 			let systemUnderTest = Expectation(
 				expectedCount: 2,
@@ -55,7 +55,7 @@ struct ExpectationTests {
 	}
 
 	@Test
-	func test_fulfill_triggersExpectationWhenExpectedCountIsZero() async {
+	func fulfill_triggersExpectationWhenExpectedCountIsZero() async {
 		await confirmation { confirmation in
 			let systemUnderTest = Expectation(
 				expectedCount: 0,
@@ -69,14 +69,14 @@ struct ExpectationTests {
 	}
 
 	@Test
-	func test_fulfillment_doesNotWaitIfAlreadyFulfilled() async {
+	func fulfillment_doesNotWaitIfAlreadyFulfilled() async {
 		let systemUnderTest = Expectation(expectedCount: 0)
 		await systemUnderTest.fulfillment(within: .seconds(10))
 	}
 
 	@MainActor // Global actor ensures Task ordering.
 	@Test
-	func test_fulfillment_waitsForFulfillment() async {
+	func fulfillment_waitsForFulfillment() async {
 		let systemUnderTest = Expectation(expectedCount: 1)
 		var hasFulfilled = false
 		let wait = Task {
@@ -91,7 +91,7 @@ struct ExpectationTests {
 	}
 
 	@Test
-	func test_fulfillment_triggersFalseExpectationWhenItTimesOut() async {
+	func fulfillment_triggersFalseExpectationWhenItTimesOut() async {
 		await confirmation { confirmation in
 			let systemUnderTest = Expectation(
 				expectedCount: 1,
