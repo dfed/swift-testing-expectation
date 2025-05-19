@@ -77,7 +77,7 @@ struct ExpectationTests {
 	@MainActor // Global actor ensures Task ordering.
 	@Test
 	func fulfillment_waitsForFulfillment() async {
-		let systemUnderTest = Expectation(expectedCount: 1, conditionFulfillmentAwaited: false)
+		let systemUnderTest = Expectation(expectedCount: 1, requireAwaitingFulfillment: false)
 		var hasFulfilled = false
 		let wait = Task {
 			await systemUnderTest.fulfillment(within: .seconds(10))

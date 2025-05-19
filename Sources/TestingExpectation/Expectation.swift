@@ -28,10 +28,10 @@ public actor Expectation {
 	/// An expected outcome in an asynchronous test.
 	/// - Parameters:
 	///   - expectedCount: The number of times `fulfill()` must be called before the expectation is completely fulfilled.
-	///   - conditionFulfillmentAwaited: When `true`, crashes in `deinit` when an expectation is created but its fulfillment has not been awaited.
+	///   - requireAwaitingFulfillment: Controls whether `deinit` requires that a created expectation has its fulfillment awaited.
 	public init(
 		expectedCount: UInt = 1,
-		conditionFulfillmentAwaited: Bool = true,
+		requireAwaitingFulfillment: Bool = true,
 		filePath: String = #filePath,
 		fileID: String = #fileID,
 		line: Int = #line,
@@ -42,7 +42,7 @@ public actor Expectation {
 			expect: { fulfilledWithExpectedCount, comment, sourceLocation in
 				#expect(fulfilledWithExpectedCount, comment, sourceLocation: sourceLocation)
 			},
-			precondition: conditionFulfillmentAwaited ? Swift.precondition : nil,
+			precondition: requireAwaitingFulfillment ? Swift.precondition : nil,
 			filePath: filePath,
 			fileID: fileID,
 			line: line,
