@@ -77,7 +77,7 @@ struct ExpectationTests {
 	@MainActor // Global actor ensures Task ordering.
 	@Test
 	func fulfillment_waitsForFulfillment() async {
-		let systemUnderTest = Expectation(expectedCount: 1)
+		let systemUnderTest = Expectation(expectedCount: 1, requireAwaitingFulfillment: false)
 		var hasFulfilled = false
 		let wait = Task {
 			await systemUnderTest.fulfillment(within: .seconds(10))
@@ -101,6 +101,42 @@ struct ExpectationTests {
 				}
 			)
 			await systemUnderTest.fulfillment(within: .zero)
+		}
+	}
+
+	@Test
+	func deinit_triggersTrueExpectationWhenNotAwaited() async {
+		let expect: @Sendable (Bool, Comment?, SourceLocation) -> Void = { _, _, _ in }
+		expect(true, nil, #_sourceLocation) // Force code coverage to cover the empty closure.
+		await confirmation { confirmation in
+			let unmanagedSystemUnderTest = Unmanaged.passRetained(Expectation(
+				expectedCount: 0,
+				expect: expect,
+				precondition: { condition, message, _, _ in
+					_ = message() // Force code coverage to cover the creation of the message.
+					#expect(condition())
+					confirmation()
+				}
+			))
+			await unmanagedSystemUnderTest.takeUnretainedValue().fulfillment(within: .zero)
+			unmanagedSystemUnderTest.release() // Force the system under test to deinit.
+		}
+	}
+
+	@Test
+	func deinit_triggersFalseExpectationWhenNotAwaited() async {
+		let expect: @Sendable (Bool, Comment?, SourceLocation) -> Void = { _, _, _ in }
+		expect(true, nil, #_sourceLocation) // Force code coverage to cover the empty closure.
+		await confirmation { confirmation in
+			_ = Expectation(
+				expectedCount: 1,
+				expect: expect,
+				precondition: { condition, message, _, _ in
+					_ = message() // Force code coverage to cover the creation of the message.
+					#expect(!condition())
+					confirmation()
+				}
+			)
 		}
 	}
 }
