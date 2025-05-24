@@ -57,7 +57,7 @@ dependencies: [
 
 ### CocoaPods
 
-To install swift-testing-expectation in your project with [CocoaPods](http://cocoapods.org), add the following to your `Podfile`:
+To install swift-testing-expectation in your project with [CocoaPods](https://blog.cocoapods.org/CocoaPods-Specs-Repo), add the following to your `Podfile`:
 
 ```
 pod 'TestingExpectation', '~> 0.1.0'
