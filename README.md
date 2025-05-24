@@ -14,7 +14,7 @@ The [Swift Testing](https://developer.apple.com/documentation/testing/testing-as
 The `Expectation` vended from this library fills that gap:
 
 ```swift
-@Test func testMethodEventuallyTriggersClosure() async {
+@Test func methodEventuallyTriggersClosure() async {
     let expectation = Expectation()
 
     systemUnderTest.closure = { expectation.fulfill() }
@@ -29,7 +29,7 @@ The `Expectation` vended from this library fills that gap:
 The `Expectations` type vended from this library makes it easy to wait for multiple expectations:
 
 ```swift
-@Test func testMethodEventuallyTriggersClosures() async {
+@Test func methodEventuallyTriggersClosures() async {
     let expectation1 = Expectation()
     let expectation2 = Expectation()
     let expectation3 = Expectation()
