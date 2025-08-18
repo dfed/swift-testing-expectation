@@ -21,9 +21,11 @@ jobs:
           'visionOS_2'
         ]
       fail-fast: false
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3.5'
@@ -47,9 +49,11 @@ jobs:
   spm-16-swift:
     name: Swift Build Xcode 16
     runs-on: macos-15
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3.5'
@@ -61,9 +65,11 @@ jobs:
   pod-lint:
     name: Pod Lint
     runs-on: macos-15
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3.5'
@@ -82,9 +88,11 @@ jobs:
     name: "Build and Test on Linux"
     runs-on: ubuntu-24.04
     container: swift:6.0
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Build and Test Framework
         run: swift test -c release --enable-code-coverage -Xswiftc -enable-testing
       - name: Prepare Coverage Reports
@@ -96,17 +104,21 @@ jobs:
   readme-validation:
     name: Check Markdown links
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Link Checker
-        uses: AlexanderDokuchaev/md-dead-link-check@v1.2.0
+        uses: AlexanderDokuchaev/md-dead-link-check@d5a37e0b14e5918605d22b34562532762ccb2e47 # v1.2.0
   lint-swift:
     name: Lint Swift
     runs-on: ubuntu-latest
     container: swift:6.0
+    permissions:
+      contents: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Lint Swift
         run: swift run --package-path CLI swiftformat . --lint
