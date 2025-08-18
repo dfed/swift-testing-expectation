@@ -9,7 +9,7 @@ Create an asynchronous expectation in Swift Testing
 
 ## Testing with asynchronous expectations
 
-The [Swift Testing](https://developer.apple.com/documentation/testing/testing-asynchronous-code) framework vends a [confirmation](https://developer.apple.com/documentation/testing/confirmation(_:expectedcount:isolation:sourcelocation:_:)-5mqz2) method which enables testing asynchronous code. However unlike [XCTest](https://developer.apple.com/documentation/xctest/asynchronous_tests_and_expectations)’s [XCTestExpectation](https://developer.apple.com/documentation/xctest/xctestexpectation), this `confirmation` must be confirmed before the confirmation’s `body` completes. Swift Testing has no out-of-the-box way to ensure that an expectation is fulfilled at some indeterminate point in the future.
+The [Swift Testing](https://developer.apple.com/documentation/testing/testing-asynchronous-code) framework vends a [confirmation](https://developer.apple.com/documentation/testing/confirmation(_:expectedcount:isolation:sourcelocation:_:)-5mqz2#) method which enables testing asynchronous code. However unlike [XCTest](https://developer.apple.com/documentation/xctest/asynchronous_tests_and_expectations)’s [XCTestExpectation](https://developer.apple.com/documentation/xctest/xctestexpectation), this `confirmation` must be confirmed before the confirmation’s `body` completes. Swift Testing has no out-of-the-box way to ensure that an expectation is fulfilled at some indeterminate point in the future.
 
 The `Expectation` vended from this library fills that gap:
 
