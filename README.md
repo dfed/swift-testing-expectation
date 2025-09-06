@@ -11,7 +11,13 @@ Create an asynchronous expectation in Swift Testing
 
 The [Swift Testing](https://developer.apple.com/documentation/testing/testing-asynchronous-code) framework vends a [confirmation](https://developer.apple.com/documentation/testing/confirmation(_:expectedcount:isolation:sourcelocation:_:)-5mqz2#) method which enables testing asynchronous code. However unlike [XCTest](https://developer.apple.com/documentation/xctest/asynchronous_tests_and_expectations)’s [XCTestExpectation](https://developer.apple.com/documentation/xctest/xctestexpectation), this `confirmation` must be confirmed before the confirmation’s `body` completes. Swift Testing has no out-of-the-box way to ensure that an expectation is fulfilled at some indeterminate point in the future.
 
-The `Expectation` vended from this library fills that gap:
+This library provides `Expectation` and `Expectations` types that fill that gap, allowing you to wait for asynchronous events with a timeout.
+
+## Usage Examples
+
+### Basic Usage
+
+The `Expectation` type allows you to wait for an asynchronous event:
 
 ```swift
 @Test func methodEventuallyTriggersClosure() async {
@@ -24,9 +30,24 @@ The `Expectation` vended from this library fills that gap:
 }
 ```
 
-### Waiting for multiple expectations
+### Multiple Fulfillments
 
-The `Expectations` type vended from this library makes it easy to wait for multiple expectations:
+You can specify how many times an expectation should be fulfilled:
+
+```swift
+@Test func methodTriggersClosureMultipleTimes() async {
+    let expectation = Expectation(expectedCount: 3)
+
+    systemUnderTest.repeatingClosure = { expectation.fulfill() }
+    systemUnderTest.triggerMultipleTimes()
+
+    await expectation.fulfillment(within: .seconds(5))
+}
+```
+
+### Waiting for Multiple Expectations
+
+The `Expectations` type makes it easy to wait for multiple expectations in parallel:
 
 ```swift
 @Test func methodEventuallyTriggersClosures() async {
@@ -40,6 +61,44 @@ The `Expectations` type vended from this library makes it easy to wait for multi
     systemUnderTest.method()
 
     await Expectations(expectation1, expectation2, expectation3).fulfillment(within: .seconds(5))
+}
+```
+
+### Handling Timeouts
+
+If an expectation is not fulfilled within the specified duration, the test will fail:
+
+```swift
+@Test func methodWithTimeout() async {
+    let expectation = Expectation()
+    
+    systemUnderTest.delayedClosure = { 
+        Task {
+            try? await Task.sleep(for: .seconds(10))
+            expectation.fulfill()
+        }
+    }
+    systemUnderTest.method()
+    
+    // This will fail if not fulfilled within 2 seconds
+    await expectation.fulfillment(within: .seconds(2))
+}
+```
+
+### Integration with Async/Await
+
+Expectations work seamlessly with Swift's async/await patterns:
+
+```swift
+@Test func asyncMethodCompletion() async {
+    let expectation = Expectation()
+    
+    Task {
+        await systemUnderTest.performAsyncOperation()
+        expectation.fulfill()
+    }
+    
+    await expectation.fulfillment(within: .seconds(5))
 }
 ```
 
