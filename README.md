@@ -45,8 +45,6 @@ The `Expectations` type vended from this library makes it easy to wait for multi
 
 ## Installation
 
-### Swift Package Manager
-
 To install swift-testing-expectation in your project with [Swift Package Manager](https://github.com/apple/swift-package-manager), the following lines can be added to your `Package.swift` file:
 
 ```swift
@@ -55,13 +53,7 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
-
-To install swift-testing-expectation in your project with [CocoaPods](https://blog.cocoapods.org/CocoaPods-Specs-Repo), add the following to your `Podfile`:
-
-```
-pod 'TestingExpectation', '~> 0.1.0'
-```
+Versions through 0.1.4 remain available on [CocoaPods](https://blog.cocoapods.org/CocoaPods-Specs-Repo). Newer releases are available only through Swift Package Manager.
 
 ## Contributing
 
